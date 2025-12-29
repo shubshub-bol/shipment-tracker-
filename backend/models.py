@@ -19,9 +19,11 @@ class ShirtSize(str, enum.Enum):
     XXL = "XXL"
 
 class ShirtStatus(str, enum.Enum):
+    PENDING = "pending"
     IN_STOCK = "in_stock"
     SHIPPED = "shipped"
     DAMAGED = "damaged"
+    ACCEPTED = "accepted"
 
 class Shipment(Base):
     __tablename__ = "shipments"
@@ -37,7 +39,7 @@ class Shirt(Base):
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     serial_number = Column(String, unique=True, index=True) # Could be QR content
-    age = Column(Integer)
+    color = Column(String) # Replaces age
     size = Column(String) # Storing Enum as string
     type = Column(String) # Storing Enum as string
     status = Column(String, default=ShirtStatus.IN_STOCK.value)

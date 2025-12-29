@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import models, schemas
 import uuid
 
@@ -9,13 +9,15 @@ def get_shirt_by_serial(db: Session, serial: str):
     return db.query(models.Shirt).filter(models.Shirt.serial_number == serial).first()
 
 def get_shirts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Shirt).offset(skip).limit(limit).all()
+    return db.query(models.Shirt).options(joinedload(models.Shirt.shipment)).offset(skip).limit(limit).all()
 
 def create_shirt(db: Session, shirt: schemas.ShirtCreate):
+    generated_serial = shirt.serial_number or f"SN-{str(uuid.uuid4())[:8].upper()}"
+    
     db_shirt = models.Shirt(
         id=str(uuid.uuid4()),
-        serial_number=shirt.serial_number,
-        age=shirt.age,
+        serial_number=generated_serial,
+        color=shirt.color,
         size=shirt.size.value,
         type=shirt.type.value
     )

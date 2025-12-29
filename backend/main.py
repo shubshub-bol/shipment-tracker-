@@ -7,9 +7,11 @@ from fastapi.middleware.cors import CORSMiddleware
 # Create tables
 models.Base.metadata.create_all(bind=database.engine)
 
+# Instance app
 app = FastAPI()
 
 # CORS configuration
+# Trigger reload for .env change
 origins = [
     "http://localhost:5173",  # React default
     "http://127.0.0.1:5173",
@@ -33,9 +35,10 @@ def get_db():
 
 @app.post("/shirts/", response_model=schemas.Shirt)
 def create_shirt(shirt: schemas.ShirtCreate, db: Session = Depends(get_db)):
-    db_shirt = crud.get_shirt_by_serial(db, serial=shirt.serial_number)
-    if db_shirt:
-        raise HTTPException(status_code=400, detail="Serial number already registered")
+    if shirt.serial_number:
+        db_shirt = crud.get_shirt_by_serial(db, serial=shirt.serial_number)
+        if db_shirt:
+            raise HTTPException(status_code=400, detail="Serial number already registered")
     return crud.create_shirt(db=db, shirt=shirt)
 
 @app.get("/shirts/", response_model=List[schemas.Shirt])
@@ -60,6 +63,8 @@ def scan_action(action: str, serial: str, db: Session = Depends(get_db), shipmen
     
     if action == "damage":
         return crud.update_shirt_status(db, serial, "damaged")
+    elif action == "accept":
+        return crud.update_shirt_status(db, serial, "accepted")
     elif action == "ship":
         if not shipment_id:
              raise HTTPException(status_code=400, detail="Shipment ID required for shipping")

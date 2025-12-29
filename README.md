@@ -1,43 +1,119 @@
-# Shirt Distribution System
+# 📦 Intelligent Shirt Inventory System
 
-A full-stack application to track shirt inventory and shipments using QR codes.
+A modern full-stack application for managing garment inventory, shipments, and real-time tracking using QR code technology.
 
-## 🚀 How to Run
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Stack](https://img.shields.io/badge/Stack-React%20%7C%20FastAPI%20%7C%20Tailwind-blue)
 
-1.  **Backend** (Terminal 1):
-    ```bash
-    cd backend
-    pip install -r requirements.txt
-    python -m uvicorn main:app --reload
-    ```
-2.  **Frontend** (Terminal 2):
-    ```bash
-    cd frontend
-    npm install
-    npm run dev
-    ```
+## ✨ Key Features
+
+*   **📊 Interactive Dashboard**: Real-time visualization of inventory stats (Total Items, Shipped, Defective) with animated counters.
+*   **📱 QR Code Workflow**:
+    *   **Generation**: Auto-generates unique QR codes for every shirt.
+    *   **Scanning**: Built-in camera scanner for verifying items and processing shipments.
+    *   **Scan-to-Receive**: Streamlined workflow to accept incoming shipments or mark damaged goods instantly.
+*   **🚚 Shipment Management**: Group items into shipments with tracking codes (`SH-XXXX`) and track their contents.
+*   **🎨 Premium UI**: Glassmorphism design system, smooth animations (Framer Motion principles), and responsive mobile-first layout.
 
 ---
 
-## 🧠 Backend Code Explained (Simple Version)
+## 🛠️ Technology Stack
 
-The backend is written in **Python** using **FastAPI**. It's the "brain" of the application. Here is what each file does:
+### Frontend
+*   **Framework**: React (Vite)
+*   **Styling**: Tailwind CSS (Custom Design System)
+*   **Icons**: Lucide React
+*   **QR Scanning**: `html5-qrcode`
 
-### 1. `main.py` (The Doorway)
-This is where the application starts. It defines the **API Endpoints** (URLs like `/shirts` or `/scan`). When the frontend asks for something, `main.py` receives the request first.
+### Backend
+*   **API**: FastAPI (Python)
+*   **Database**: SQLite (via SQLAlchemy ORM)
+*   **Validation**: Pydantic Schemas
 
-### 2. `models.py` (The Database Tables)
-This file defines what our data looks like in the database.
--   **Shirt**: Has ID, Size, Type, Age, and Status.
--   **Shipment**: Has a Tracking Code and a list of shirts.
+---
 
-### 3. `crud.py` (The Logic)
-"CRUD" stands for **C**reate, **R**ead, **U**pdate, **D**elete. This file contains the actual functions that do the work, like:
--   `create_shirt`: Saves a new shirt to the database.
--   `update_shirt_status`: Changes a shirt from "In Stock" to "Shipped".
+## 🚀 Installation & Setup
 
-### 4. `schemas.py` (The Validator)
-This ensures the data is correct before we process it. For example, it checks that "Age" is actually a number and "Type" is one of the allowed options (Buttoned, Hooded, Closed).
+Follow these steps to get the project running on your local machine.
 
-### 5. `database.py` (The Connection)
-This file simply connects our Python code to the Database (SQLite or SQL). It handles the "pipeline" for data flow.
+### Prerequisites
+*   **Node.js** (v18+ recommended)
+*   **Python** (v3.8+)
+*   **Git**
+
+### 1. Clone the Repository
+Open your terminal and run:
+
+```bash
+git clone <repository-url>
+cd perceptive_assesment
+```
+
+### 2. Backend Setup (The Brain)
+Open a terminal in the `backend/` folder:
+
+```bash
+cd backend
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the server
+python -m uvicorn main:app --reload
+```
+*Server runs at: `http://localhost:8000`*
+
+### 3. Frontend Setup (The Interface)
+Open a **new** terminal in the `frontend/` folder:
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
+```
+*App runs at: `http://localhost:5173`*
+
+---
+
+## 🔄 User Workflows
+
+### 1️⃣ Creating Inventory
+1.  Navigate to **Inventory**.
+2.  Click **"Add New Shirt"**.
+3.  Fill in details (Size, Type, Color). **Serial Number** is auto-generated if left blank.
+4.  Item status starts as **"In Stock"** (Emerald Badge).
+
+### 2️⃣ Shipping Items
+1.  Navigate to **Shipments**.
+2.  Select items from the "Available Items" grid.
+3.  Enter a **Tracking Code** (e.g., `TRK-001`).
+4.  Click **"Create Shipment"**.
+5.  Selected items move to **"Shipped"** status (Blue Badge).
+
+### 3️⃣ Receiving & Scanning (The core workflow)
+1.  Go to **Scanner**.
+2.  Scan the QR code of a physical item (or click "View QR" in inventory to simulate).
+3.  System identifies the item state:
+    *   **If Shipped**: You see **"Accept"** (Verify Receipt) and **"Defective"** buttons.
+        *   ✅ **Accepting** allows you to mark the shipment as safely received (Purple Badge).
+    *   **If In Stock**: Shows as "Verified".
+    *   **If Defective**: Warns that item is already damaged.
+
+---
+
+## 📂 Code Structure Simplified
+
+| File | Purpose |
+|---|---|
+| **`models.py`** | Defines the database tables and the **Status Lifecycle** (`In Stock` → `Shipped` → `Accepted` / `Damaged`). |
+| **`schemas.py`** | Validates data moving between Frontend and Backend (e.g. ensures "Color" is a string). |
+| **`crud.py`** | Contains the logic for specific actions (Create item, Update status, etc.). |
+| **`main.py`** | The API controller that listens for requests (e.g., `POST /scan/`). |
+
+---
+
+> Built with ❤️ by Antigravity
